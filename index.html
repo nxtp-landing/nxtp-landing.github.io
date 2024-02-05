@@ -1,0 +1,44 @@
+<script>
+  var LAUNCHED = "#launched";
+  var PROTOCOL = "nextop";
+  var ACTION_KEY = "action"
+
+  function parseQS() {
+    return window.location.search
+      .slice(1)
+      .split("&")
+      .reduce((acc, item) => {
+        var parts = item.split("=");
+        acc[parts[0]] = parts[1];
+        return acc;
+      }, {});
+  }
+
+  window.onload = function () {
+
+    var qs = parseQS();
+
+    if (!qs[ACTION_KEY]) {
+      return;
+    }
+
+    var params = Object.keys(qs)
+      .filter(key => key !== ACTION_KEY)
+      .map((key) => key + "=" + qs[key])
+      .join("&");
+
+    var url = PROTOCOL + "://" + qs[ACTION_KEY] + (params.length ? "?" + params : "");
+
+    document.querySelector("a").href = url;
+
+    // prevent launch after page refresh
+    if (window.location.hash === LAUNCHED) {
+      return;
+    }
+
+    window.location.assign(url);
+
+    window.location.replace(window.location.href + LAUNCHED);
+  };
+</script>
+<a href="nextop://app">Open Nextop App</a>
